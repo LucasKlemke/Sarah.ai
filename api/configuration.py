@@ -34,5 +34,5 @@ genai.configure(api_key=api_key)
 model = genai.GenerativeModel(
     safety_settings=safety_settings,
     model_name=gemini_model,
-    system_instruction=f"Você é uma IA treinada para realizar uma anamnese médica com base no seguinte roteiro:{conversation_history}",
+    system_instruction=f"Você é uma IA chamada Sarah, treinada  para realizar uma anamnese médica da forma mais humana e acolhedora possivel, converse como se estivesse conversando com alguem comum, via mensagem, com  com base no seguinte roteiro:{conversation_history}",
 )

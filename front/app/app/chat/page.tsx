@@ -1,26 +1,41 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader, Send, SendIcon } from 'lucide-react';
-import Image from 'next/image';
-import AutosizeTextareaWithRef from './auto-size-text-area';
-import { ask_question } from '@/lib/request';
+import { Loader, Send } from 'lucide-react';
+import { submit_question } from '@/lib/request';
 import { useState } from 'react';
+import { Montserrat } from 'next/font/google';
+const montserrat = Montserrat({ subsets: ['latin'] });
 
 export default function Home() {
   const [question, setQuestion] = useState('');
-  const [answers, setAnswers] = useState([]);
+  const [answers, setAnswers] = useState<
+    { question: string; answer: string }[] | []
+  >([]);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     setLoading(true);
-    const resposta: string = await ask_question(question, answers);
-    if (resposta) {
+    const llm_answer: string = await submit_question(question, answers);
+    if (llm_answer) {
       setAnswers((state) => [
         ...state,
-        { question: question, answer: resposta },
+        { question: question, answer: llm_answer },
       ]);
     }
+
+    let history = localStorage.getItem('history');
+    const newId = Math.random().toString(36).substring(7);
+
+    if (history && JSON.parse(history).length > 0) {
+        history = JSON.parse(history);
+        history.push({ id: newId, content: JSON.stringify(answers) });
+        localStorage.setItem('history', JSON.stringify(history));
+    } else if (!history ) {
+        localStorage.setItem('history', JSON.stringify([{ id: newId, content: JSON.stringify(answers) }]));
+    }
+
+    console.log(localStorage.getItem('history'));
 
     setQuestion('');
     setLoading(false);
@@ -34,14 +49,17 @@ export default function Home() {
       <div className="h-[82vh] w-full flex flex-col space-y-10 overflow-scroll">
         {answers.map((item, index) => (
           <div className="flex flex-col space-y-5 px-10" key={index}>
-            <h1 className="self-end bg-gray-500 px-3 py-3 text-white rounded-2xl">{item.question}</h1>
+            <h1 className="self-end bg-gray-500 px-3 py-3 text-white rounded-2xl">
+              {item.question}
+            </h1>
             <div className="self-start flex gap-x-2 w-">
               <div>
-                <pre
-                  className=" whitespace-pre-line "
-                  onClick={() => console.log(answers)}
-                >
-                  {item.answer}
+                <pre className={`${montserrat.className} whitespace-pre-line`}>
+                  {item.answer
+                    .split('**')
+                    .map((part: string, index: any) =>
+                      index % 2 === 1 ? <b key={index}>{part}</b> : part
+                    )}
                 </pre>
               </div>
             </div>

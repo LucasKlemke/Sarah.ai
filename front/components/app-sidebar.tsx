@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -11,7 +12,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
-import { Cross, Home, Info, Mail } from 'lucide-react';
+import { Cross, Home, Hospital, Info, Mail, Plus } from 'lucide-react';
 
 const items = [
   {
@@ -37,18 +38,18 @@ const footerItems = [
     url: '#',
     icon: Info,
   },
-  {
-    title: 'Contato',
-    url: '#',
-    icon: Mail,
-  },
+  // {
+  //   title: 'Contato',
+  //   url: '#',
+  //   icon: Mail,
+  // },
 ];
 
 export default function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader className="items-center">
-        <Cross className="h-10 w-10" />
+      <SidebarHeader>
+        <Button className='flex' variant='outline'>Novo Chat <Plus/></Button>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

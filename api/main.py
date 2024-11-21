@@ -19,5 +19,7 @@ def start_chat(question: str, history):
     response = chat_session.send_message(user_input)
 
     model_response = response.text
+    
+    print(response.text)
 
     return model_response
