@@ -14,32 +14,32 @@ export default function Home() {
   >([]);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    const llm_answer: string = await submit_question(question, answers);
-    if (llm_answer) {
-      setAnswers((state) => [
-        ...state,
-        { question: question, answer: llm_answer },
-      ]);
-    }
+  // const handleSubmit = async () => {
+  //   setLoading(true);
+  //   const llm_answer: string = await submit_question(question, answers);
+  //   if (llm_answer) {
+  //     setAnswers((state) => [
+  //       ...state,
+  //       { question: question, answer: llm_answer },
+  //     ]);
+  //   }
 
-    let history = localStorage.getItem('history');
-    const newId = Math.random().toString(36).substring(7);
+  //   let history = localStorage.getItem('history');
+  //   const newId = Math.random().toString(36).substring(7);
 
-    if (history && JSON.parse(history).length > 0) {
-        history = JSON.parse(history);
-        history.push({ id: newId, content: JSON.stringify(answers) });
-        localStorage.setItem('history', JSON.stringify(history));
-    } else if (!history ) {
-        localStorage.setItem('history', JSON.stringify([{ id: newId, content: JSON.stringify(answers) }]));
-    }
+  //   if (history && JSON.parse(history).length > 0) {
+  //       history = JSON.parse(history);
+  //       history.push({ id: newId, content: JSON.stringify(answers) });
+  //       localStorage.setItem('history', JSON.stringify(history));
+  //   } else if (!history ) {
+  //       localStorage.setItem('history', JSON.stringify([{ id: newId, content: JSON.stringify(answers) }]));
+  //   }
 
-    console.log(localStorage.getItem('history'));
+  //   console.log(localStorage.getItem('history'));
 
-    setQuestion('');
-    setLoading(false);
-  };
+  //   setQuestion('');
+  //   setLoading(false);
+  // };
 
   return (
     <div className="px-10">
@@ -73,7 +73,7 @@ export default function Home() {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
-          <Button disabled={loading} onClick={() => handleSubmit()} size="icon">
+          <Button disabled={loading} onClick={() => console.log('xxx')} size="icon">
             {loading ? <Loader className="animate-spin" /> : <Send />}
           </Button>
         </div>

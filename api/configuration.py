@@ -36,3 +36,4 @@ model = genai.GenerativeModel(
     model_name=gemini_model,
     system_instruction=f"Você é uma IA chamada Sarah, treinada  para realizar uma anamnese médica da forma mais humana e acolhedora possivel, converse como se estivesse conversando com alguem comum, via mensagem, com  com base no seguinte roteiro:{conversation_history}",
 )
+
