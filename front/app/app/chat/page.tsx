@@ -1,12 +1,21 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader, RefreshCcw, Send, Square, Trash } from 'lucide-react';
-import { submit_question } from '@/lib/request';
-import { useState } from 'react';
+import {
+  Check,
+  File,
+  Loader,
+  RefreshCcw,
+  Send,
+  Square,
+  Trash,
+  Upload,
+} from 'lucide-react';
 import { Montserrat } from 'next/font/google';
 const montserrat = Montserrat({ subsets: ['latin'] });
 import { useChat } from 'ai/react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useRef, useState } from 'react';
 
 export default function Home() {
   const {
@@ -33,6 +42,9 @@ export default function Home() {
     },
   });
 
+  const [files, setFiles] = useState<FileList | undefined>(undefined);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleDelete = (id: string) => {
     setMessages(messages.filter((message) => message.id !== id));
   };
@@ -46,11 +58,72 @@ export default function Home() {
         {messages.map((message) => (
           <div className="flex flex-col" key={message.id}>
             {message.role === 'user' ? (
-              <h1 className="self-end bg-gray-500 px-3 py-3 text-white rounded-2xl">
-                {message.content}
-              </h1>
+              <>
+                <div className="self-end flex-col bg-gray-500 px-3 py-3 rounded-2xl">
+                  {/* <div className="w-full invisible flex justify-end">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => handleDelete(message.id)}
+                  >
+                    <Trash />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={reload}
+                    disabled={isLoading}
+                  >
+                    <RefreshCcw />
+                  </Button>
+                </div> */}
+                  <h1 className="text-end p-0 m-0  text-white ">
+                    {message.content}
+                  </h1>
+                </div>
+                {message.experimental_attachments && (
+                  <div className="self-end flex-col bg-gray-500 px-3 py-3 rounded-2xl mt-2">
+                    <div className="grid grid-cols-2">
+                      {message.experimental_attachments
+                        ?.filter((attachment) =>
+                          attachment.contentType.startsWith('image/')
+                        )
+                        .map((attachment, index) => (
+                          <img
+                            className="rounded-2xl p-3"
+                            width={200}
+                            height={200}
+                            key={`${message.id}-${index}`}
+                            src={attachment.url}
+                            alt={attachment.name}
+                          />
+                        ))}
+                      {message.experimental_attachments
+                        ?.filter((attachment) =>
+                          attachment.contentType.startsWith('application/pdf')
+                        )
+                        .map((attachment, index) => (
+                          <div
+                            className="flex-col items-center justify-center"
+                            key={`${message.id}-${index}`}
+                          >
+                            <File />
+                            {attachment.name}
+                          </div>
+                        ))}
+                      <Button
+                        onClick={() =>
+                          console.log(message.experimental_attachments)
+                        }
+                      >
+                        Clique
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
             ) : (
-              <div className="self-start flex gap-x-2 w-">
+              <div className="self-start flex gap-x-2">
                 <div>
                   <pre
                     className={`${montserrat.className} whitespace-pre-line`}
@@ -84,6 +157,7 @@ export default function Home() {
             )}
           </div>
         ))}
+
         {error && (
           <div className="flex flex-col items-center space-y-3">
             <div className="text-center">Something went wrong.</div>
@@ -96,9 +170,34 @@ export default function Home() {
 
       <div className="  rounded-t-xl justify-center  flex">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={(event) => {
+            handleSubmit(event, {
+              experimental_attachments: files,
+            });
+
+            setFiles(undefined);
+
+            if (fileInputRef.current) {
+              fileInputRef.current.value = '';
+            }
+          }}
           className="w-1/2 gap-x-2 flex items-center justify-center py-3"
         >
+          <label htmlFor="file-upload" className="cursor-pointer">
+            {!files ? <Upload /> : <Check />}
+          </label>
+          <Input
+            id="file-upload"
+            className=" hidden"
+            type="file"
+            onChange={(event) => {
+              if (event.target.files) {
+                setFiles(event.target.files);
+              }
+            }}
+            multiple
+            ref={fileInputRef}
+          />
           <Input
             name="prompt"
             value={input}
