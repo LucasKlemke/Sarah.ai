@@ -8,12 +8,6 @@ const ChatPage = () => {
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {};
-
-    fetchData();
-  }, []);
-
   const [question, setQuestion] = useState('');
 
   const handleSubmit = async () => {
