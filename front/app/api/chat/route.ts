@@ -1,5 +1,5 @@
 import { streamText } from 'ai';
-import { llm_model } from '@/lib/llm';
+import { llm_model, llm_prompt } from '@/lib/llm';
 
 export const maxDuration = 1;
 
@@ -8,8 +8,7 @@ export async function POST(request: Request) {
 
   const response = streamText({
     model: llm_model,
-    system:
-      'Você é uma IA muito inteligente! Possui uma linguagem extremamente culta e fala com deveras elegancia',
+    system:llm_prompt,
     messages: messages,
   });
 

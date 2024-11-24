@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import {
   Sidebar,
@@ -12,7 +13,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
-import { Cross, Home, Hospital, Info, Mail, Plus } from 'lucide-react';
+import { Home, Info, Plus } from 'lucide-react';
 
 const items = [
   {
@@ -38,30 +39,33 @@ const footerItems = [
     url: '#',
     icon: Info,
   },
-  // {
-  //   title: 'Contato',
-  //   url: '#',
-  //   icon: Mail,
-  // },
 ];
+
+let history: string | string[] = localStorage.getItem('history') as string;
+if (history) {
+  history = JSON.parse(history as string);
+  console.log(history);
+}
 
 export default function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Button className='flex' variant='outline'>Novo Chat <Plus/></Button>
+        <Button className="flex" variant="outline">
+          Novo Chat <Plus />
+        </Button>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Histórico</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+              {history?.map((item) => (
+                <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <a href={item.id}>
                       {/* <item.icon /> */}
-                      <span>{item.title}</span>
+                      <span>{item.content[0].content}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

@@ -29,3 +29,7 @@ export const llm_model = google(llmModel as string, {
     },
   ],
 });
+
+export const llm_prompt = `
+
+`;
