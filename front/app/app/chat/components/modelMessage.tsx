@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-('use client');
+
 import { Button } from '@/components/ui/button';
 import { RefreshCcw, Trash } from 'lucide-react';
 import { Montserrat } from 'next/font/google';

@@ -8,8 +8,11 @@ import UserMessage from './components/userMessage';
 import { useToast } from '@/hooks/use-toast';
 import ModelMessage from './components/modelMessage';
 import ChatErrorMessage from './components/chatErroMessage';
+import { useHistoryStore } from '@/store/history';
+import { useRouter } from 'next/navigation';
 
-export default function Home() {
+export default function page() {
+  const router = useRouter();
   const {
     messages,
     input,
@@ -25,6 +28,7 @@ export default function Home() {
       console.log('Finished streaming message:', message);
       console.log('Token usage:', usage);
       console.log('Finish reason:', finishReason);
+      setFinished(true);
     },
     onError: (error) => {
       console.error('An error occurred:', error);
@@ -36,7 +40,23 @@ export default function Home() {
   const { toast } = useToast();
 
   const [files, setFiles] = useState<FileList | undefined>(undefined);
+  const [finished, setFinished] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [id, setId] = useState(null);
+
+  const { history, setHistory, getHistory } = useHistoryStore();
+
+  useEffect(() => {
+    console.log(id);
+    if (finished) {
+      const newId = history.length + 1;
+      setHistory([...history, { id: newId.toString(), content: messages }]);
+      setId(newId);
+      router.push(`/app/chat/${newId}`);
+
+      setFinished(false);
+    }
+  }, [finished]);
 
   const handleDelete = (id: string) => {
     setMessages(messages.filter((message) => message.id !== id));
@@ -45,16 +65,12 @@ export default function Home() {
     });
   };
 
-  useEffect(() => {
-    console.log('Messages:', messages);
-  }, [messages]);
-
   return (
     <div className="px-10">
       <div className=" w-full">
         <h1 className="text-4xl text-center font-extralight pb-5">Sarah.ai</h1>
       </div>
-      <div className="h-[82vh] w-full flex flex-col space-y-10 overflow-scroll">
+      <div className="h-[80vh] w-full flex flex-col space-y-10 overflow-y-scroll">
         {messages.map((message) => (
           <div className="flex flex-col" key={message.id}>
             {message.role === 'user' ? (

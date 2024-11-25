@@ -12,8 +12,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useHistoryStore } from '@/store/history';
 
-import { Home, Info, Plus } from 'lucide-react';
+import { Home, Info, Plus, Trash } from 'lucide-react';
+import Link from 'next/link';
 
 const items = [
   {
@@ -41,32 +43,40 @@ const footerItems = [
   },
 ];
 
-let history: string | string[] = localStorage.getItem('history') as string;
-if (history) {
-  history = JSON.parse(history as string);
-  console.log(history);
-}
-
 export default function AppSidebar() {
+  const { history, removeHistory } = useHistoryStore();
+
+  // const history = null
+
   return (
     <Sidebar>
       <SidebarHeader>
-        <Button className="flex" variant="outline">
-          Novo Chat <Plus />
-        </Button>
+        <Link href={'/app/chat'}>
+          <Button className="flex w-full" variant="outline">
+            Novo Chat <Plus />
+          </Button>
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Histórico</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {history?.map((item) => (
+              {history?.map((item: any) => (
                 <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton asChild>
-                    <a href={item.id}>
-                      {/* <item.icon /> */}
-                      <span>{item.content[0].content}</span>
-                    </a>
+                    <div className="flex w-full justify-between">
+                      <Link
+                        href={`/app/chat/${item.id}`}
+                        className="truncate ..."
+                      >
+                        <span>{item.content[0].content}</span>
+                      </Link>
+                      <Trash
+                        className="cursor-pointer hover:scale-105"
+                        onClick={() => removeHistory(item.id)}
+                      />
+                    </div>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
