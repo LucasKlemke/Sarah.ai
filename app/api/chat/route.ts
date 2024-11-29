@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   const response = streamText({
     model: llm_model,
     system:llm_prompt,
-    messages: messages,
+    messages: messages, 
   });
 
   // Respond with the stream
