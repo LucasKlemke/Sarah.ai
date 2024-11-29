@@ -1,7 +1,7 @@
 import { streamText } from 'ai';
 import { llm_model, llm_prompt } from '@/lib/llm';
 
-export const maxDuration = 1;
+export const maxDuration = 30;
 
 export async function POST(request: Request) {
   const { messages } = await request.json();
