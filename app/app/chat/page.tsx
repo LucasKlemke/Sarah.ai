@@ -12,7 +12,7 @@ import { useHistoryStore } from '@/store/history';
 import { useRouter } from 'next/navigation';
 import { TypeAnimation } from 'react-type-animation';
 
-export default function Page() {
+export default function page() {
   const router = useRouter();
   const {
     messages,

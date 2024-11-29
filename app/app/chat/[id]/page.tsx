@@ -10,7 +10,7 @@ import ModelMessage from '@/app/app/chat/components/modelMessage';
 import ChatErrorMessage from '@/app/app/chat/components/chatErroMessage';
 import { useHistoryStore } from '@/store/history';
 
-export default function Page({ params }: { params: { id: string } }) {
+export default function page({ params }: { params: { id: string } }) {
   const {
     messages,
     input,
