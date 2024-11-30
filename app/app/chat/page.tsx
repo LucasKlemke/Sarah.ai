@@ -11,6 +11,8 @@ import ChatErrorMessage from './components/chatErroMessage';
 import { useHistoryStore } from '@/store/history';
 import { useRouter } from 'next/navigation';
 import { TypeAnimation } from 'react-type-animation';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/client';
 
 export default function page() {
   const router = useRouter();
@@ -44,11 +46,18 @@ export default function page() {
   const [finished, setFinished] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [id, setId] = useState(null);
+   const supabase = createClient()
 
   const { history, setHistory }: any = useHistoryStore();
 
+  async function getUserId () {
+
+const { data: { user } } = await supabase.auth.getUser();
+console.log(user)
+  }
+
   useEffect(() => {
-    console.log(id);
+    getUserId()
     if (finished) {
       const newId = history.length + 1;
       setHistory([...history, { id: newId.toString(), content: messages }]);

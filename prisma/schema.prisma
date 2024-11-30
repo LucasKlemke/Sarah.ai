@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  selectedOrg   String?
+  selectedProj  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  phone         String?
+  History       History[]
+}
+
+model History {
+  id              String            @id @default(uuid())
+  title           String
+  userId          String
+  organizationId  String
+  projectId       String
+  createdAt       DateTime          @default(now())
+  user            User              @relation(fields: [userId], references: [id])
+  HistoryMessages HistoryMessages[]
+
+  @@map("history")
+}
+
+model HistoryMessages {
+  id        String   @id @default(uuid())
+  historyId String
+  messages  String
+  createdAt DateTime @default(now())
+  history   History  @relation(fields: [historyId], references: [id], onDelete: Cascade)
+
+  @@map("history_messages")
+}
