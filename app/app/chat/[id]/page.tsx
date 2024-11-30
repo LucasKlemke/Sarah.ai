@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import ModelMessage from '@/app/app/chat/components/modelMessage';
 import ChatErrorMessage from '@/app/app/chat/components/chatErroMessage';
 import { useHistoryStore } from '@/store/history';
+import { getMessages, updateChat } from '../__actions/chat';
 
 export default function page({ params }: { params: { id: string } }) {
   const {
@@ -41,10 +42,33 @@ export default function page({ params }: { params: { id: string } }) {
 
   const [finished, setFinished] = useState(false);
 
-  useEffect(() => {
-    console.log(params.id);
-    console.log('aiai',history)
+  const storeChat = async () => {
     try {
+      await updateChat(params.id, messages);
+    } catch (e) {
+      console.error(e);
+    }
+
+    setFinished(false);
+  };
+
+  const fetchMessages = async () => {
+    try {
+      const messagesData = await getMessages(params.id);
+      console.log(messagesData);
+      setMessages(JSON.parse(messagesData?.messages));
+      
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  useEffect(() => {
+    fetchMessages()
+    console.log(params.id);
+    console.log('aiai', history);
+    try {
+
       const current = history.find(
         (item: { id: string; content: any[] }) => item.id === params.id
       );
@@ -54,24 +78,26 @@ export default function page({ params }: { params: { id: string } }) {
       console.error(e);
     }
   }, []);
+
   useEffect(() => {
     if (finished) {
-      if (history.length === 0) {
-        setHistory([{ id: '1', content: messages }]);
-      } else {
-        const current = history.find(
-          (item: { id: string; content: any[] }) => item.id === params.id
-        );
-        if (current) {
-          current.content = messages;
-        }
+      // if (history.length === 0) {
+      //   setHistory([{ id: '1', content: messages }]);
+      // } else {
+      //   const current = history.find(
+      //     (item: { id: string; content: any[] }) => item.id === params.id
+      //   );
+      //   if (current) {
+      //     current.content = messages;
+      //   }
 
-        setHistory(history);
-      }
+      //   setHistory(history);
+      // }
 
-      console.log('Finished');
-      console.log(messages);
-      setFinished(false);
+      // console.log('Finished');
+      // console.log(messages);
+
+      storeChat();
     }
   }, [finished]);
 

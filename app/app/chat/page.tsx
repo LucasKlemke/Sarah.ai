@@ -11,6 +11,8 @@ import ChatErrorMessage from './components/chatErroMessage';
 import { useHistoryStore } from '@/store/history';
 import { useRouter } from 'next/navigation';
 import { TypeAnimation } from 'react-type-animation';
+import { createClient } from '@/utils/supabase/client';
+import { createChat } from './__actions/chat';
 
 export default function page() {
   const router = useRouter();
@@ -43,18 +45,32 @@ export default function page() {
   const [files, setFiles] = useState<FileList | undefined>(undefined);
   const [finished, setFinished] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [id, setId] = useState(null);
+  const [newId, setNewId] = useState(null);
+  const supabase = createClient();
 
   const { history, setHistory }: any = useHistoryStore();
 
-  useEffect(() => {
-    console.log(id);
-    if (finished) {
-      const newId = history.length + 1;
-      setHistory([...history, { id: newId.toString(), content: messages }]);
-      setId(newId);
-      router.push(`/app/chat/${newId}`);
+  async function getUserId() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
+    if (!user?.id) throw new Error('User not found');
+
+    return user?.id;
+  }
+
+  useEffect(() => {
+    getUserId();
+
+    const storeChat = async () => {
+      const userId = await getUserId();
+      const newId = await createChat(userId as string, messages);
+      setFinished(false);
+      router.push(`/app/chat/${newId}`);
+    };
+    if (finished) {
+      storeChat();
       setFinished(false);
     }
   }, [finished]);
@@ -97,10 +113,7 @@ export default function page() {
           <div className="flex flex-col justify-center h-4/6 gap-y-4">
             <TypeAnimation
               className="text-center font-extralight"
-              sequence={[
-                'Como posso ajudar hoje ?',
-                1000,
-              ]}
+              sequence={['Como posso ajudar hoje ?', 1000]}
               wrapper="span"
               speed={50}
               style={{ fontSize: '2em', display: 'inline-block' }}
