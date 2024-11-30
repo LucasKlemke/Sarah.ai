@@ -1,4 +1,5 @@
 'use client';
+import { getHistory } from '@/app/app/chat/__actions/chat';
 import { Button } from '@/components/ui/button';
 import {
   Sidebar,
@@ -13,9 +14,11 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useHistoryStore } from '@/store/history';
+import { createClient } from '@/utils/supabase/client';
 
 import { Home, Info, Plus, Trash } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 const items = [
   {
@@ -44,8 +47,29 @@ const footerItems = [
 ];
 
 export default function AppSidebar() {
-  const { history, removeHistory }: any = useHistoryStore();
+  // const { history, removeHistory }: any = useHistoryStore();
+  const supabase = createClient();
 
+  const [history, setHistory] = useState(null);
+  async function getUserId() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) throw new Error('User not found');
+
+    return user?.id;
+  }
+
+  useEffect(() => {
+    const getHistoryItems = async () => {
+      const userId = await getUserId();
+      const historyData = await getHistory(userId);
+      setHistory(historyData);
+    };
+
+    getHistoryItems()
+  }, []);
   // const history = null
 
   return (
@@ -70,11 +94,11 @@ export default function AppSidebar() {
                         href={`/app/chat/${item.id}`}
                         className="truncate ..."
                       >
-                        <span>{item.content[0].content}</span>
+                        <span>{item.title}</span>
                       </Link>
                       <Trash
                         className="cursor-pointer hover:scale-105"
-                        onClick={() => removeHistory(item.id)}
+                        // onClick={() => removeHistory(item.id)}
                       />
                     </div>
                   </SidebarMenuButton>
