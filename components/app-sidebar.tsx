@@ -195,7 +195,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         {open && <Button>Sobre</Button>}
 
-        <NavUser user={data.user} />
+      
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

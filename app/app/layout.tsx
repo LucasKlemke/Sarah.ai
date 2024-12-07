@@ -3,7 +3,12 @@ import '@/app/globals.css';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/components/ui/sidebar';
+import { NavUser } from '@/components/nav-user';
 
 export const metadata: Metadata = {
   title: 'Sarah.ai',
@@ -24,9 +29,19 @@ export default function RootLayout({
         )}
       > */}
       <AppSidebar />
-      <SidebarInset className='p-10'>
-          {children}
-          <Toaster />
+      <SidebarInset className='flex'>
+        <div className="w-[200px] self-end">
+          <NavUser
+            user={{
+              name: 'shadcn',
+              email: 'm@example.com',
+              avatar: '/avatars/shadcn.jpg',
+            }}
+          />
+        </div>
+
+        {children}
+        <Toaster />
       </SidebarInset>
       {/* </div> */}
     </SidebarProvider>
