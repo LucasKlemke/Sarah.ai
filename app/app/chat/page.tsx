@@ -13,6 +13,8 @@ import { useRouter } from 'next/navigation';
 import { TypeAnimation } from 'react-type-animation';
 import { createClient } from '@/utils/supabase/client';
 import { createChat } from './__actions/chat';
+import PageContainer from '@/components/page-container';
+import { TextFade } from '@/components/TextFate';
 
 export default function page() {
   const router = useRouter();
@@ -48,7 +50,7 @@ export default function page() {
   const [newId, setNewId] = useState(null);
   const supabase = createClient();
 
-  const { history, setHistory }: any = useHistoryStore();
+  const { history, setHistory, addHistory }: any = useHistoryStore();
 
   async function getUserId() {
     const {
@@ -67,6 +69,7 @@ export default function page() {
       const userId = await getUserId();
       const newId = await createChat(userId as string, messages);
       setFinished(false);
+      addHistory({ id: newId, title: messages[0].content });
       router.push(`/app/chat/${newId}`);
     };
     if (finished) {
@@ -83,11 +86,15 @@ export default function page() {
   };
 
   return (
-    <div className="px-10">
-      <div className=" w-full">
-        <h1 className="text-4xl text-center font-extralight  pb-5">Sarah.ai</h1>
+    <PageContainer>
+      {/* Header */}
+      <div className="row-span-2 w-full">
+        <h1 className="text-4xl text-center font-normal  pb-5">
+          MedBuddy.AI
+        </h1>
       </div>
-      <div className="h-[80vh] w-full flex flex-col space-y-10 overflow-y-scroll">
+      {/* ---- */}
+      <div className="row-span-6 w-full flex flex-col space-y-10 overflow-y-scroll">
         {messages.length > 0 ? (
           <>
             {messages.map((message) => (
@@ -110,14 +117,15 @@ export default function page() {
             ))}
           </>
         ) : (
-          <div className="flex flex-col justify-center h-4/6 gap-y-4">
-            <TypeAnimation
+          <TextFade direction='up' className="flex flex-col justify-center h-4/6 gap-y-4">
+            {/* <TypeAnimation
               className="text-center font-extralight"
               sequence={['Como posso ajudar hoje ?', 1000]}
               wrapper="span"
               speed={50}
               style={{ fontSize: '2em', display: 'inline-block' }}
-            />
+            /> */}
+            <h1 className='text-3xl font-normal text-center'>Como posso ajudar ? </h1>
             <div className="flex justify-center">
               <form
                 onSubmit={(event) => {
@@ -168,13 +176,14 @@ export default function page() {
                 )}
               </form>
             </div>
-          </div>
+          </TextFade>
         )}
 
         {error && <ChatErrorMessage reload={reload} />}
       </div>
 
-      <div className="  rounded-t-xl justify-center  flex">
+      {/* Input */}
+      <div className="row-span-2 rounded-t-xl justify-center  flex">
         {messages.length > 0 && (
           <form
             onSubmit={(event) => {
@@ -226,6 +235,6 @@ export default function page() {
           </form>
         )}
       </div>
-    </div>
+    </PageContainer>
   );
 }

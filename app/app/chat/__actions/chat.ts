@@ -1,7 +1,9 @@
 'use server'
 
 import { PrismaClient } from '@prisma/client';
+import { createClient } from '@/utils/supabase/server';
 
+const supabase = createClient();
 const prisma = new PrismaClient();
 
 export const createChat = async ( userId: string, messages: any) => {
@@ -52,7 +54,13 @@ export const getMessages = async (historyId:string) =>{
   }
 }
 
-export const getHistory = async (userId: string) => { 
+export const getHistory = async () => { 
+ const {
+  data: { user },
+} = await (await supabase).auth.getUser();
+
+const userId = user?.id
+
   try {
     const history = await prisma.history.findMany({
       where: {
@@ -64,6 +72,18 @@ export const getHistory = async (userId: string) => {
     });
 
     return history
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export const deleteHistory = async (historyId: string) => {
+  try {
+    await prisma.history.delete({
+      where: {
+        id: historyId,
+      },
+    });
   } catch (e) {
     console.error(e);
   }
