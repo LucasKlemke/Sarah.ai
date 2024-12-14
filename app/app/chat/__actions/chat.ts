@@ -6,13 +6,14 @@ import { createClient } from '@/utils/supabase/server';
 const supabase = createClient();
 const prisma = new PrismaClient();
 
-export const createChat = async ( userId: string, messages: any) => {
+export const createChat = async ( userId: string, messages: any, subject: string) => {
   try {
     const newData = await prisma.history.create({
       data: {
         title: messages[0].content,
         userId: userId,
         messages: JSON.stringify(messages),
+        history_subject: subject,
       },
     });
 
@@ -68,6 +69,7 @@ const userId = user?.id
       }, select: {
         id: true,
         title: true,
+        history_subject: true,
       }
     });
 

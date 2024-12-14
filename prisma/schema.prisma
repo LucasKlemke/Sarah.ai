@@ -10,13 +10,14 @@ datasource db {
 }
 
 model History {
-  id        String   @id @default(uuid())
-  title     String
-  createdAt DateTime @default(now())
-  messages  String
-  updatedAt DateTime @updatedAt
-  userId    String?  @db.Uuid
-  users     users?   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id              String   @id @default(uuid())
+  title           String
+  created_at      DateTime @default(now())
+  messages        String
+  updated_at      DateTime @updatedAt
+  userId          String?  @db.Uuid
+  history_subject String?
+  users           users?   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("history")
   @@schema("public")

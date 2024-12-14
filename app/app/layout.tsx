@@ -11,7 +11,7 @@ import {
 import { NavUser } from '@/components/nav-user';
 
 export const metadata: Metadata = {
-  title: 'Sarah.ai',
+  title: 'StudMed',
   description: 'AI web doctor',
 };
 
@@ -29,7 +29,9 @@ export default function RootLayout({
         )}
       > */}
       <AppSidebar />
-      <SidebarInset className='flex'>
+      <SidebarInset className="flex">
+        {/* <SidebarTrigger /> */}
+        {/* <div className="flex flex-col flex-1"> */}
         <div className="w-[200px] self-end">
           <NavUser
             user={{

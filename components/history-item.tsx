@@ -10,6 +10,7 @@ import {
 import { deleteHistory } from '@/app/app/chat/__actions/chat';
 import { useToast } from '@/hooks/use-toast';
 import { useHistoryStore } from '@/store/history';
+import { ciclo_basico } from '@/lib/materias';
 
 const HistoryItem = ({ item }) => {
   const { toast } = useToast();
@@ -34,10 +35,22 @@ const HistoryItem = ({ item }) => {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger className="flex justify-between w-full ">
-          <Link href={`/app/chat/${item.id}`}>
-            <span className="truncate">{item.title.slice(0, 16) + '...'}</span>
+        <TooltipTrigger className="flex justify-between w-full pb-1">
+          <Link href={`/app/chat/${item.id}`} className="gap-x-3 flex ">
+            <span className="truncate text-sm">
+              {item.title.slice(0, 16) + '...'}
+            </span>
+            <span
+              className={`text-xs ${
+              ciclo_basico.some((subject) => subject.nome === item.history_subject)
+                ? ciclo_basico.find((subject) => subject.nome === item.history_subject)?.bg
+                : ''
+              } rounded-full px-3 py-1 text-white font-semibold`}
+            >
+              {item.history_subject.slice(0,3)}
+            </span>
           </Link>
+
           {isLoading ? (
             <Loader2 className="animate-spin" />
           ) : (

@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { FileCheck, Send, Square, Upload } from 'lucide-react';
+import { FileCheck, GraduationCap, Send, Square, Upload } from 'lucide-react';
 import { useChat } from 'ai/react';
 import { useEffect, useRef, useState } from 'react';
 import UserMessage from '@/app/app/chat/components/userMessage';
@@ -10,6 +10,7 @@ import ModelMessage from '@/app/app/chat/components/modelMessage';
 import ChatErrorMessage from '@/app/app/chat/components/chatErroMessage';
 import { useHistoryStore } from '@/store/history';
 import { getMessages, updateChat } from '../__actions/chat';
+import { useSubjectStore } from '@/store/subject';
 
 export default function page({ params }: { params: { id: string } }) {
   const {
@@ -36,6 +37,7 @@ export default function page({ params }: { params: { id: string } }) {
       console.log('Received HTTP response from server:', response);
     },
   });
+  const { subject, setSubject }: any = useSubjectStore();
   const { toast } = useToast();
   const { history, setHistory }: any = useHistoryStore();
   console.log('history', history);
@@ -57,18 +59,16 @@ export default function page({ params }: { params: { id: string } }) {
       const messagesData = await getMessages(params.id);
       console.log(messagesData);
       setMessages(JSON.parse(messagesData?.messages));
-      
     } catch (e) {
       console.error(e);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchMessages()
+    fetchMessages();
     console.log(params.id);
     console.log('aiai', history);
     try {
-
       const current = history.find(
         (item: { id: string; content: any[] }) => item.id === params.id
       );
@@ -114,7 +114,10 @@ export default function page({ params }: { params: { id: string } }) {
   return (
     <div className="px-10">
       <div className=" w-full">
-        <h1 className="text-4xl text-center font-extralight pb-5">Sarah.ai</h1>
+        <div className="justify-center flex">
+          <h1 className="text-4xl text-center pb-5">StudMed</h1>
+          <GraduationCap className="rotate-45 " />
+        </div>
       </div>
       <div className="h-[80vh] w-full flex flex-col space-y-10 overflow-y-scroll">
         {messages.map((message) => (
@@ -144,6 +147,9 @@ export default function page({ params }: { params: { id: string } }) {
           onSubmit={(event) => {
             handleSubmit(event, {
               experimental_attachments: files,
+              body: {
+                selected_subject: subject.nome,
+              },
             });
 
             setFiles(undefined);
